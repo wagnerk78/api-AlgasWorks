@@ -6,15 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.groups.ConvertGroup;
 import jakarta.validation.groups.Default;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 
 @Getter
@@ -33,7 +33,7 @@ public class Veiculo {
     @ConvertGroup(from = Default.class, to = ValidationGroups.ProprietarioId.class)
     @ManyToOne
     // @JoinColumn(name = "proprietario_id")
-    @NonNull
+    @NotNull
     private Proprietario proprietario;
     @NotBlank
     private String marca;
@@ -49,8 +49,8 @@ public class Veiculo {
     @Enumerated(EnumType.STRING)
     private StatusVeiculo status;
     @JsonProperty(access = Access.READ_ONLY)
-    private LocalDateTime dataCadastro;
+    private OffsetDateTime dataCadastro;
     @JsonProperty(access = Access.READ_ONLY)
-    private LocalDateTime dataApreensao;
+    private OffsetDateTime dataApreensao;
 
 }
