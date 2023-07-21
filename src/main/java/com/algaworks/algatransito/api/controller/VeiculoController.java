@@ -1,7 +1,9 @@
 package com.algaworks.algatransito.api.controller;
 
 
+import com.algaworks.algatransito.api.assembler.VeiculoAssembler;
 import com.algaworks.algatransito.api.model.VeiculoModel;
+import com.algaworks.algatransito.api.model.input.VeiculoInput;
 import com.algaworks.algatransito.domain.model.Veiculo;
 import com.algaworks.algatransito.domain.repository.VeiculoRepository;
 import com.algaworks.algatransito.domain.service.RegistroVeiculoService;
@@ -20,27 +22,18 @@ public class VeiculoController {
 
     private final VeiculoRepository veiculoRepository;
     private final RegistroVeiculoService registroVeiculoService;
+    private final VeiculoAssembler veiculoAssembler;
 
     @GetMapping
-    public List<Veiculo> listar() {
-        return veiculoRepository.findAll();
+    public List<VeiculoModel> listar() {
+
+        return veiculoAssembler.toCollectionModel(veiculoRepository.findAll());
     }
 
     @GetMapping("/{veiculoId}")
     public ResponseEntity<VeiculoModel> buscar(@PathVariable Long veiculoId) {
         return veiculoRepository.findById(veiculoId)
-                .map(veiculo -> {
-                    var veiculoModel = new VeiculoModel();
-                    veiculoModel.setIdVeiculo(veiculo.getId());
-                    veiculoModel.setNomeProprietario(veiculo.getProprietario().getNome());
-                    veiculoModel.setMarca(veiculo.getMarca());
-                    veiculoModel.setModelo(veiculo.getModelo());
-                    veiculoModel.setPlaca(veiculo.getPlaca());
-                    veiculoModel.setDataApreensao(veiculo.getDataApreensao());
-                    veiculoModel.setDataCadastro(veiculo.getDataCadastro());
-                    veiculoModel.setStatus(veiculo.getStatus());
-                    return veiculoModel;
-                })
+                .map(veiculoAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
 
@@ -48,8 +41,14 @@ public class VeiculoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Veiculo cadastrar(@Valid @RequestBody Veiculo veiculo) {
-        return registroVeiculoService.cadastrar(veiculo);
+    public VeiculoModel cadastrar(@Valid @RequestBody VeiculoInput veiculoInput) {
+        Veiculo newVeiculo = veiculoAssembler.toEntity(veiculoInput);
+        Veiculo veiculoCadastrado = registroVeiculoService.cadastrar(newVeiculo);
+
+
+        return veiculoAssembler.toModel(veiculoCadastrado);
+
+        // return veiculoAssembler.toModel(registroVeiculoService.cadastrar(veiculo));
 
 
     }
