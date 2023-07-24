@@ -16,16 +16,9 @@ public class VeiculoAssembler {
 
     private final ModelMapper modelMapper;
 
-
-
     public Veiculo toEntity(VeiculoInput veiculoInput) {
         return modelMapper.map(veiculoInput, Veiculo.class);
     }
-
-
-
-
-
 
     public VeiculoModel toModel(Veiculo veiculo) {
 
