@@ -5,11 +5,15 @@ import com.algaworks.algatransito.api.assembler.AutuacaoAssembler;
 import com.algaworks.algatransito.api.model.AutuacaoModel;
 import com.algaworks.algatransito.api.model.input.AutuacaoInput;
 import com.algaworks.algatransito.domain.model.Autuacao;
+import com.algaworks.algatransito.domain.model.Veiculo;
 import com.algaworks.algatransito.domain.service.RegistroAutuacaoService;
+import com.algaworks.algatransito.domain.service.RegistroVeiculoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -19,6 +23,7 @@ public class AutuacaoController {
 
     private AutuacaoAssembler autuacaoAssembler;
     private RegistroAutuacaoService registroAutuacaoService;
+    private RegistroVeiculoService registroVeiculoService;
 
 
     @PostMapping
@@ -31,6 +36,15 @@ public class AutuacaoController {
 
         return autuacaoAssembler.toModel(autuacaoRegistrada);
     }
+
+    @GetMapping
+    public List<AutuacaoModel> listar(@PathVariable Long veiculoId) {
+        Veiculo veiculo = registroVeiculoService.buscar(veiculoId);
+
+        return autuacaoAssembler.toCollectionModel(veiculo.getAutuacoes());
+    }
+
+
 
 
 
